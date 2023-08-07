@@ -1,46 +1,21 @@
 import Highcharts from "highcharts";
 import optionsValue from "./utils/constants";
+import {
+  processData,
+  filterChannels,
+  highChartsData,
+} from "./utils/utilfunctions";
 
 const engagementHelper = {
-  processData: (messageCountList) => {
-    const channelsData = {};
-    messageCountList.forEach((message) => {
-      const { channelId, timeBucket, count } = message;
-      if (!channelsData[channelId]) {
-        channelsData[channelId] = [];
-      }
-      channelsData[channelId].push({
-        date: timeBucket,
-        count: parseInt(count),
-      });
-    });
-    return channelsData;
-  },
-  filterChannels: (channelsData) => {
-    const filteredChannelsData = Object.entries(channelsData).filter(
-      ([_, data]) => data.length > 1
-    );
-    return filteredChannelsData;
-  },
-  highChartsData: function (filteredChannelsData, channels) {
-    const seriesData = filteredChannelsData.map(([channelId, data]) => {
-      const channel = channels.find((ch) => ch.id === channelId);
-      return {
-        name: channel.name,
-        data: data.map((item) => [this.getCurrentTime(item.date), item.count]),
-      };
-    });
-    return seriesData;
-  },
-  engagementMessageOverTimeChartOptions: function (messageCountList, channels) {
+  engagementMessageOverTimeChartOptions: (messageCountList, channels) => {
     // Step 1: Process the data
-    const channelsData = this.processData(messageCountList);
+    const channelsData = processData(messageCountList);
 
     // Step 2: Filter channels with messages on more than one date
-    const filteredChannelsData = this.filterChannels(channelsData);
+    const filteredChannelsData = filterChannels(channelsData);
 
     // Step 3: Prepare the data for Highcharts
-    const seriesData = this.highChartsData(filteredChannelsData, channels);
+    const seriesData = highChartsData(filteredChannelsData, channels);
 
     // Step 4: Generate Highcharts options
     const options = {
@@ -79,9 +54,6 @@ const engagementHelper = {
       },
     };
     return options;
-  },
-  getCurrentTime: (item) => {
-    return new Date(item).getTime();
   },
 };
 
