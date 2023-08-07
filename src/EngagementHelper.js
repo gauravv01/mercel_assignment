@@ -49,7 +49,7 @@ const engagementHelper = {
         backgroundColor: optionsValue.chart.backgroundColor,
       },
       title: {
-        text: optionsValue.title,
+        text: optionsValue.title.text,
       },
       xAxis: {
         type: optionsValue.xAxis.type,
